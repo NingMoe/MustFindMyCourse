@@ -1,3 +1,9 @@
+# trap ctrl-c and call ctrl_c()
+trap ctrl_c INT
+function ctrl_c() {
+        curl 'https://coes-stud.must.edu.mo/coes/logout.do' -H 'Pragma: no-cache' -H 'DNT: 1' -H 'Accept-Encoding: gzip, deflate, br' -H 'Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7' -H 'Upgrade-Insecure-Requests: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8' -H 'Cache-Control: no-cache' -H 'Referer: https://coes-stud.must.edu.mo/coes/login.do' -H "Cookie: JSESSIONID=$jsessionid" -H 'Connection: keep-alive' --compressed
+}
+
 export LC_CTYPE=C
 export LANG=C
 RED='\033[0;31m'
@@ -34,19 +40,18 @@ if [[ -z "${password}" ]]; then
 fi
 echo "已获取密码: $password"
 
-crsCode=
-
 curl "$loginUrl;jsessionid=$jsessionid" -H 'Pragma: no-cache' -H 'Origin: '$domain -H 'Accept-Encoding: gzip, deflate, br' -H 'Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7' -H 'Upgrade-Insecure-Requests: 1' -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8' -H 'Cache-Control: no-cache' -H "Referer: $loginUrl" -H "Cookie: JSESSIONID=$jsessionid" -H 'Connection: keep-alive' -H 'DNT: 1' --data "org.apache.struts.taglib.html.TOKEN=$token&userid=$userid&password=$password&submit=%E7%99%BB%E5%85%A5" --compressed > 2.html
 
 alert=$(grep -o 'alert(\".*\");' 2.html)
 if [ -n "$alert" ]; then
   echo "登录失败"
-  echo -e "失败原因：$RED$alert$NC" && exit 0
+  echo -e "失败原因：$RED$alert$NC"
+  exit 0
 else
   echo "登录成功"
 fi
 
-crsCode='INB411-002'
+crsCode='MKT410-001'
 crsIntake='1809'
 clsCode='E1'
 
